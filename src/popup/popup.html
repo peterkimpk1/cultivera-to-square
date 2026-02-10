@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cultivera to Square</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="popup-header">
+      <h1>Cultivera to Square</h1>
+    </header>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="state-container">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+
+    <!-- Login Form -->
+    <div id="login-state" class="state-container hidden">
+      <p class="subtitle">Sign in to create Square invoices</p>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="you@example.com"
+            required
+            autocomplete="email"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="••••••••"
+            required
+            autocomplete="current-password"
+          >
+        </div>
+
+        <div id="login-error" class="error-message hidden"></div>
+
+        <button type="submit" id="login-button" class="btn btn-primary">
+          Sign In
+        </button>
+      </form>
+    </div>
+
+    <!-- Signed In State -->
+    <div id="signed-in-state" class="state-container hidden">
+      <div class="user-info">
+        <div class="user-avatar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <div class="user-details">
+          <span class="user-email" id="user-email"></span>
+          <span class="user-status">Authorized Invoicer</span>
+        </div>
+      </div>
+
+      <div class="instructions">
+        <p>Navigate to an order in Cultivera PRO to see the "Send to Square" button.</p>
+      </div>
+
+      <button id="sign-out-button" class="btn btn-secondary">
+        Sign Out
+      </button>
+    </div>
+
+    <footer class="popup-footer">
+      <p>Pure Shenandoah</p>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

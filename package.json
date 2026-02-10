@@ -1,0 +1,23 @@
+{
+  "name": "cultivera-square-extension",
+  "version": "1.0.0",
+  "description": "Chrome extension to create Square invoices from Cultivera PRO orders",
+  "scripts": {
+    "build": "node esbuild.config.js",
+    "build:prod": "node esbuild.config.js --prod",
+    "watch": "node esbuild.config.js --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "package": "npm run build:prod && cd dist && zip -r ../cultivera-square-extension.zip ."
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.268",
+    "chokidar": "^3.5.3",
+    "dotenv": "^16.6.1",
+    "esbuild": "^0.20.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.3"
+  }
+}
