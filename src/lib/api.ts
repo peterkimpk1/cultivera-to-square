@@ -37,6 +37,10 @@ export async function createInvoice(
   };
 
   try {
+    console.log('[API] Sending to:', EDGE_FUNCTION_URL);
+    console.log('[API] Request body:', requestBody);
+    console.log('[API] Token (first 20 chars):', accessToken?.substring(0, 20));
+
     const response = await fetch(EDGE_FUNCTION_URL, {
       method: 'POST',
       headers: {
@@ -46,7 +50,9 @@ export async function createInvoice(
       body: JSON.stringify(requestBody),
     });
 
+    console.log('[API] Response status:', response.status);
     const data: CreateInvoiceResponse = await response.json();
+    console.log('[API] Response data:', data);
     return data;
   } catch (error) {
     const message =

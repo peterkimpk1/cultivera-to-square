@@ -33,15 +33,13 @@ function copyStaticFiles() {
     path.join(popupDir, 'popup.css')
   );
 
-  // Copy modal CSS
-  const modalDir = path.join(distDir, 'modal');
-  if (!fs.existsSync(modalDir)) {
-    fs.mkdirSync(modalDir, { recursive: true });
+  // Copy pdf.js worker
+  const pdfWorkerSrc = path.join(__dirname, 'node_modules', 'pdfjs-dist', 'build', 'pdf.worker.min.mjs');
+  if (fs.existsSync(pdfWorkerSrc)) {
+    fs.copyFileSync(pdfWorkerSrc, path.join(distDir, 'pdf.worker.min.mjs'));
+  } else {
+    console.warn('Warning: pdf.worker.min.mjs not found. Run npm install first.');
   }
-  fs.copyFileSync(
-    path.join(__dirname, 'src', 'modal', 'modal.css'),
-    path.join(modalDir, 'modal.css')
-  );
 
   // Copy assets (icons)
   const assetsDir = path.join(distDir, 'assets');
@@ -70,7 +68,6 @@ if (fs.existsSync(envPath)) {
 // Build configuration
 const buildOptions = {
   entryPoints: [
-    'src/content.ts',
     'src/background.ts',
     'src/popup/popup.ts',
   ],

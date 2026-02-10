@@ -61,6 +61,12 @@ const USER_RATE_LIMIT = 10; // per hour
 const GLOBAL_RATE_LIMIT = 50; // per hour
 const SQUARE_API_VERSION = '2024-01-18';
 
+// Use sandbox for testing, production for live
+// Set SQUARE_ENVIRONMENT=sandbox or SQUARE_ENVIRONMENT=production
+const SQUARE_BASE_URL = Deno.env.get('SQUARE_ENVIRONMENT') === 'production'
+  ? 'https://connect.squareup.com'
+  : 'https://connect.squareupsandbox.com';
+
 // ============================================================================
 // Helper Functions
 // ============================================================================
@@ -153,7 +159,7 @@ async function squareRequest(
     headers['Idempotency-Key'] = idempotencyKey;
   }
 
-  const response = await fetch(`https://connect.squareup.com/v2${endpoint}`, {
+  const response = await fetch(`${SQUARE_BASE_URL}/v2${endpoint}`, {
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
@@ -285,6 +291,13 @@ async function createInvoice(
             automatic_payment_source: 'NONE',
           },
         ],
+        accepted_payment_methods: {
+          card: true,
+          square_gift_card: false,
+          bank_account: true,
+          buy_now_pay_later: false,
+          cash_app_pay: false,
+        },
         delivery_method: 'EMAIL',
         title: `Invoice for Order #${orderNumber}`,
       },
@@ -416,14 +429,8 @@ Deno.serve(async (req: Request) => {
 
   const jwt = authHeader.replace('Bearer ', '');
 
-  // Create a client with the user's JWT to validate it
-  const userSupabase = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY') || '', {
-    global: {
-      headers: { Authorization: `Bearer ${jwt}` },
-    },
-  });
-
-  const { data: { user }, error: authError } = await userSupabase.auth.getUser();
+  // Validate the user's JWT using the service role client
+  const { data: { user }, error: authError } = await supabase.auth.getUser(jwt);
 
   if (authError || !user) {
     await logAudit(supabase, correlationId, {

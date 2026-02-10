@@ -68,7 +68,19 @@ export interface ScrapedOrderData {
   order_number: string;
   customer_name: string;
   customer_email: string;
-  amount_due: string; // Raw string from DOM (e.g., "$1,234.56")
+  amount_due: string; // Raw string from PDF (e.g., "$1,234.56")
+}
+
+// ============================================================================
+// PDF Parsing Types
+// ============================================================================
+
+export interface PDFParseResult {
+  success: boolean;
+  data?: ScrapedOrderData;
+  errors: string[];
+  warnings: string[];
+  rawText?: string;
 }
 
 export interface ParsedOrderData {

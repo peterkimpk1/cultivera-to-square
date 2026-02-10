@@ -70,11 +70,88 @@
         </div>
       </div>
 
-      <div class="instructions">
-        <p>Navigate to an order in Cultivera PRO to see the "Send to Square" button.</p>
+      <!-- Upload Zone -->
+      <div id="upload-zone" class="upload-zone">
+        <input type="file" id="file-input" accept=".pdf,application/pdf" hidden>
+        <div class="upload-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="12" y1="18" x2="12" y2="12"></line>
+            <line x1="9" y1="15" x2="15" y2="15"></line>
+          </svg>
+        </div>
+        <p class="upload-text">Drag & drop invoice PDF here</p>
+        <p class="upload-subtext">or click to browse</p>
       </div>
 
-      <button id="sign-out-button" class="btn btn-secondary">
+      <!-- Processing State -->
+      <div id="processing-state" class="processing-state hidden">
+        <div class="spinner"></div>
+        <p>Parsing PDF...</p>
+      </div>
+
+      <!-- Parse Result -->
+      <div id="parse-result" class="parse-result hidden">
+        <h3 class="result-title">Invoice Details</h3>
+        <div class="result-details">
+          <div class="detail-row">
+            <span class="detail-label">Order #</span>
+            <span class="detail-value" id="result-order-number"></span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Customer</span>
+            <span class="detail-value" id="result-customer-name"></span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Email</span>
+            <span class="detail-value" id="result-customer-email"></span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Amount</span>
+            <span class="detail-value amount" id="result-amount"></span>
+          </div>
+        </div>
+        <button id="send-invoice-btn" class="btn btn-primary">
+          Send to Square
+        </button>
+        <button id="upload-another-btn" class="btn btn-secondary">
+          Upload Different PDF
+        </button>
+      </div>
+
+      <!-- Parse Error -->
+      <div id="parse-error" class="parse-error hidden">
+        <div class="error-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        <p class="error-title">Could not parse PDF</p>
+        <p class="error-details" id="error-details"></p>
+        <button id="retry-upload-btn" class="btn btn-secondary">
+          Try Again
+        </button>
+      </div>
+
+      <!-- Success State -->
+      <div id="success-state" class="success-state hidden">
+        <div class="success-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <p class="success-title">Invoice Sent!</p>
+        <p class="success-details" id="success-details"></p>
+        <button id="upload-new-btn" class="btn btn-primary">
+          Send Another Invoice
+        </button>
+      </div>
+
+      <button id="sign-out-button" class="btn btn-secondary sign-out-btn">
         Sign Out
       </button>
     </div>

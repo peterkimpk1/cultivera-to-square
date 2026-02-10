@@ -2,13 +2,11 @@
   "manifest_version": 3,
   "name": "Cultivera to Square Invoice",
   "version": "1.0.0",
-  "description": "Create Square invoices directly from Cultivera PRO orders",
+  "description": "Create Square invoices from Cultivera PRO invoice PDFs",
   "permissions": [
-    "storage",
-    "activeTab"
+    "storage"
   ],
   "host_permissions": [
-    "https://*.cultivera.com/*",
     "https://zxrtfrqsoaqzjzyerwjl.supabase.co/*"
   ],
   "action": {
@@ -27,17 +25,10 @@
   "background": {
     "service_worker": "background.js"
   },
-  "content_scripts": [
-    {
-      "matches": ["https://*.cultivera.com/*"],
-      "js": ["content.js"],
-      "css": ["modal/modal.css"]
-    }
-  ],
   "web_accessible_resources": [
     {
-      "resources": ["modal/modal.css"],
-      "matches": ["https://*.cultivera.com/*"]
+      "resources": ["pdf.worker.min.mjs"],
+      "matches": ["<all_urls>"]
     }
   ]
 }
