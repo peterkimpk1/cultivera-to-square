@@ -134,6 +134,34 @@ export function formatCurrency(cents: number): string {
 }
 
 /**
+ * Get error title based on error code
+ */
+export function getErrorTitle(code: string): string {
+  const errorTitles: Record<string, string> = {
+    AUTH_MISSING: 'Authentication Required',
+    AUTH_INVALID: 'Authentication Failed',
+    AUTH_EXPIRED: 'Session Expired',
+    UNAUTHORIZED: 'Not Authorized',
+    VALIDATION_MISSING_FIELD: 'Missing Information',
+    VALIDATION_INVALID_EMAIL: 'Invalid Email',
+    VALIDATION_INVALID_AMOUNT: 'Invalid Amount',
+    VALIDATION_INVALID_ORDER: 'Invalid Order',
+    DUPLICATE_ORDER: 'Duplicate Order',
+    RATE_LIMITED_USER: 'Too Many Requests',
+    RATE_LIMITED_GLOBAL: 'System Busy',
+    REPLAY_REJECTED: 'Request Expired',
+    SQUARE_API_ERROR: 'Square Error',
+    SQUARE_CUSTOMER_ERROR: 'Customer Error',
+    SQUARE_ORDER_ERROR: 'Order Error',
+    SQUARE_INVOICE_ERROR: 'Invoice Error',
+    SQUARE_PUBLISH_ERROR: 'Invoice Send Error',
+    INTERNAL_ERROR: 'Something Went Wrong',
+  };
+
+  return errorTitles[code] || 'Something Went Wrong';
+}
+
+/**
  * Get user-friendly error message based on error code
  */
 export function getErrorMessage(code: string, defaultMessage: string): string {

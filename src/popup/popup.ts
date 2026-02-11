@@ -2,7 +2,7 @@ console.log('[Popup] Script loading...');
 
 import { signIn, signOut, getUser, onAuthStateChange } from '../lib/supabase';
 import { parseCultiveraInvoice, parseOrderData } from '../lib/pdf-parser';
-import { createInvoice, checkOrderStatus, formatCurrency, getErrorMessage } from '../lib/api';
+import { createInvoice, checkOrderStatus, formatCurrency, getErrorMessage, getErrorTitle } from '../lib/api';
 import { addToLocalLog } from '../lib/storage';
 import { ScrapedOrderData, ParsedOrderData } from '../lib/types';
 
@@ -38,6 +38,7 @@ const sendInvoiceBtn = document.getElementById('send-invoice-btn') as HTMLButton
 const uploadAnotherBtn = document.getElementById('upload-another-btn') as HTMLButtonElement;
 
 // Error elements
+const errorTitle = document.getElementById('error-title')!;
 const errorDetails = document.getElementById('error-details')!;
 const retryUploadBtn = document.getElementById('retry-upload-btn') as HTMLButtonElement;
 
@@ -135,6 +136,7 @@ async function handleFile(file: File): Promise<void> {
     const result = await parseCultiveraInvoice(file);
 
     if (!result.success || !result.data) {
+      errorTitle.textContent = 'Could not parse PDF';
       errorDetails.textContent = result.errors.join(' ');
       showUploadState('error');
       return;
@@ -143,6 +145,7 @@ async function handleFile(file: File): Promise<void> {
     // Parse the order data to get amount in cents
     const parsedData = parseOrderData(result.data);
     if (!parsedData) {
+      errorTitle.textContent = 'Could not parse PDF';
       errorDetails.textContent = 'Could not parse order amount.';
       showUploadState('error');
       return;
@@ -151,6 +154,7 @@ async function handleFile(file: File): Promise<void> {
     // Check if order was already processed
     const orderStatus = await checkOrderStatus(parsedData.order_number);
     if (orderStatus.exists && orderStatus.status === 'completed') {
+      errorTitle.textContent = 'Duplicate Order';
       errorDetails.textContent = `Invoice already sent for order #${parsedData.order_number}. View in Square Dashboard.`;
       showUploadState('error');
       return;
@@ -162,6 +166,7 @@ async function handleFile(file: File): Promise<void> {
     showUploadState('result');
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
+    errorTitle.textContent = 'Could not parse PDF';
     errorDetails.textContent = `Failed to parse PDF: ${message}`;
     showUploadState('error');
   }
@@ -208,6 +213,8 @@ async function handleSendInvoice(): Promise<void> {
       successDetails.textContent = `Invoice #${result.data.invoice_number} has been emailed to the customer.`;
       showUploadState('success');
     } else {
+      const errorCode = result.error?.code || '';
+      errorTitle.textContent = getErrorTitle(errorCode);
       const errorMessage = result.error
         ? getErrorMessage(result.error.code, result.error.message)
         : 'An unexpected error occurred.';
@@ -216,6 +223,7 @@ async function handleSendInvoice(): Promise<void> {
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
+    errorTitle.textContent = 'Invoice Creation Failed';
     errorDetails.textContent = `Failed to create invoice: ${message}`;
     showUploadState('error');
   } finally {

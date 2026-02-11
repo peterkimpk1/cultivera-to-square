@@ -120,7 +120,7 @@
         </button>
       </div>
 
-      <!-- Parse Error -->
+      <!-- Error State -->
       <div id="parse-error" class="parse-error hidden">
         <div class="error-icon">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -129,7 +129,7 @@
             <line x1="12" y1="16" x2="12.01" y2="16"></line>
           </svg>
         </div>
-        <p class="error-title">Could not parse PDF</p>
+        <p class="error-title" id="error-title">Something went wrong</p>
         <p class="error-details" id="error-details"></p>
         <button id="retry-upload-btn" class="btn btn-secondary">
           Try Again

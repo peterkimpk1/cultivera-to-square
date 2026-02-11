@@ -448,7 +448,7 @@ Deno.serve(async (req: Request) => {
   // 2. Authorization
   // ============================================================================
   const { data: isAuthorized } = await supabase.rpc('is_authorized_invoicer', {
-    check_user_id: user.id,
+    p_user_id: user.id,
   });
 
   if (!isAuthorized) {
