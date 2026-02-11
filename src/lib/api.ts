@@ -1,4 +1,4 @@
-import { getAccessToken, SUPABASE_URL } from './supabase';
+import { getAccessToken, SUPABASE_URL, SUPABASE_ANON_KEY } from './supabase';
 import {
   CreateInvoiceRequest,
   CreateInvoiceResponse,
@@ -46,14 +46,28 @@ export async function createInvoice(
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`,
+        apikey: SUPABASE_ANON_KEY,
       },
       body: JSON.stringify(requestBody),
     });
 
     console.log('[API] Response status:', response.status);
-    const data: CreateInvoiceResponse = await response.json();
+    const data = await response.json();
     console.log('[API] Response data:', data);
-    return data;
+
+    // Handle Supabase auth errors (different format than our edge function)
+    if (data.code && data.message && !('success' in data)) {
+      return {
+        success: false,
+        correlation_id: '',
+        error: {
+          code: data.code === 401 ? 'AUTH_INVALID' : 'INTERNAL_ERROR',
+          message: data.message,
+        },
+      };
+    }
+
+    return data as CreateInvoiceResponse;
   } catch (error) {
     const message =
       error instanceof Error
@@ -80,11 +94,13 @@ export async function checkOrderStatus(
   const accessToken = await getAccessToken();
 
   if (!accessToken) {
+    console.log('[API] checkOrderStatus: No access token');
     return { exists: false };
   }
 
   try {
     // Use Supabase RPC to check order status
+    console.log('[API] checkOrderStatus: Checking order', orderNumber);
     const response = await fetch(
       `${SUPABASE_URL}/rest/v1/rpc/get_processed_order`,
       {
@@ -92,17 +108,22 @@ export async function checkOrderStatus(
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${accessToken}`,
-          apikey: accessToken,
+          apikey: SUPABASE_ANON_KEY,
         },
         body: JSON.stringify({ check_order_number: orderNumber }),
       }
     );
 
+    console.log('[API] checkOrderStatus response status:', response.status);
+
     if (!response.ok) {
+      const errorText = await response.text();
+      console.log('[API] checkOrderStatus error:', errorText);
       return { exists: false };
     }
 
     const data = await response.json();
+    console.log('[API] checkOrderStatus data:', data);
 
     if (!data || data.length === 0) {
       return { exists: false };
@@ -118,7 +139,8 @@ export async function checkOrderStatus(
       customer_name: order.customer_name,
       amount_cents: order.amount_cents,
     };
-  } catch {
+  } catch (error) {
+    console.error('[API] checkOrderStatus exception:', error);
     return { exists: false };
   }
 }

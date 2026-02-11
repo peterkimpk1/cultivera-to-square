@@ -163,4 +163,4 @@ export async function refreshSession(): Promise<Session | null> {
   return data.session;
 }
 
-export { SUPABASE_URL };
+export { SUPABASE_URL, SUPABASE_ANON_KEY };

@@ -213,11 +213,12 @@ async function handleSendInvoice(): Promise<void> {
       successDetails.textContent = `Invoice #${result.data.invoice_number} has been emailed to the customer.`;
       showUploadState('success');
     } else {
+      console.log('[Popup] Invoice error response:', JSON.stringify(result, null, 2));
       const errorCode = result.error?.code || '';
       errorTitle.textContent = getErrorTitle(errorCode);
-      const errorMessage = result.error
+      const errorMessage = result.error?.message
         ? getErrorMessage(result.error.code, result.error.message)
-        : 'An unexpected error occurred.';
+        : (typeof result === 'object' ? JSON.stringify(result) : 'An unexpected error occurred.');
       errorDetails.textContent = errorMessage;
       showUploadState('error');
     }
